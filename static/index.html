@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Agente de ventas</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <main class="app">
+      <header class="header">
+        <div>
+          <p class="eyebrow">ANÁLISIS DE VENTAS</p>
+          <h1>Pregunta a tus datos</h1>
+          <p class="subtitle">Consulta ventas, tiendas, productos y promociones en lenguaje natural.</p>
+        </div>
+        <button id="new-chat" class="secondary" type="button">Nueva conversación</button>
+      </header>
+
+      <section id="messages" class="messages" role="log" aria-live="polite" aria-label="Conversación">
+        <div class="welcome">
+          <span class="welcome-icon" aria-hidden="true">✦</span>
+          <h2>¿Qué quieres saber?</h2>
+          <p>Puedes empezar con una de estas preguntas:</p>
+          <div class="suggestions">
+            <button type="button" data-prompt="¿Cuáles son las 5 tiendas con mayores ventas totales?">Top 5 tiendas por ventas</button>
+            <button type="button" data-prompt="¿Qué porcentaje de ventas se realizó en promoción?">Ventas en promoción</button>
+            <button type="button" data-prompt="¿Cómo evolucionaron las ventas mensuales?">Evolución mensual</button>
+          </div>
+        </div>
+      </section>
+
+      <form id="chat-form" class="composer">
+        <label class="sr-only" for="message">Tu pregunta</label>
+        <textarea id="message" name="message" rows="1" maxlength="4000" placeholder="Escribe una pregunta sobre las ventas…" required></textarea>
+        <button id="send" type="submit" aria-label="Enviar pregunta">Enviar</button>
+      </form>
+      <p id="status" class="status" role="status"></p>
+    </main>
+  </body>
+</html>

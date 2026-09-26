@@ -19,6 +19,7 @@ from pydantic import BaseModel, Field
 
 ROOT = Path(__file__).resolve().parent
 DB_PATH = ROOT / "sales_data.db"
+DEFAULT_MODEL = "deepseek/deepseek-v4.1-flash"
 SYSTEM_PROMPT = """Eres un analista de datos de ventas con acceso a una base SQLite.
 Tabla sales: Store_Number INTEGER, SKU_Coded INTEGER,
 Product_Class_Code INTEGER, Sold_Date TEXT (AAAA-MM-DD),
@@ -27,6 +28,8 @@ Responde en español. Para cada pregunta sobre los datos, usa query_sales antes 
 responder. Genera únicamente consultas SELECT sobre sales. Limita resultados
 detallados a 100 filas. Da formato claro a las cifras monetarias e indica tus
 suposiciones cuando la pregunta sea ambigua.
+Responde en texto plano, sin tablas ni encabezados Markdown.
+La base no indica la moneda; no atribuyas una divisa ni uses su símbolo.
 """
 
 
@@ -61,6 +64,23 @@ def get_api_key() -> str:
     return key
 
 
+async def create_sales_session(client: CopilotClient, model: str = DEFAULT_MODEL, *, streaming: bool = False):
+    return await client.create_session(
+        on_permission_request=PermissionHandler.approve_all,
+        model=model,
+        provider={
+            "type": "openai",
+            "base_url": "https://openrouter.ai/api/v1",
+            "wire_api": "responses",
+            "api_key": get_api_key(),
+        },
+        streaming=streaming,
+        tools=[query_sales],
+        available_tools=["custom:query_sales"],
+        system_message={"mode": "replace", "content": SYSTEM_PROMPT},
+    )
+
+
 async def run(question: str | None, model: str) -> None:
     if not DB_PATH.is_file():
         raise FileNotFoundError(f"No existe la base de datos: {DB_PATH}")
@@ -71,20 +91,7 @@ async def run(question: str | None, model: str) -> None:
     )
     await client.start()
     try:
-        session = await client.create_session(
-            on_permission_request=PermissionHandler.approve_all,
-            model=model,
-            provider={
-                "type": "openai",
-                "base_url": "https://openrouter.ai/api/v1",
-                "wire_api": "responses",
-                "api_key": get_api_key(),
-            },
-            streaming=True,
-            tools=[query_sales],
-            available_tools=["custom:query_sales"],
-            system_message={"mode": "replace", "content": SYSTEM_PROMPT},
-        )
+        session = await create_sales_session(client, model, streaming=True)
 
         def on_event(event):
             if event.type == SessionEventType.ASSISTANT_MESSAGE_DELTA:
@@ -123,7 +130,7 @@ async def run(question: str | None, model: str) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Agente de análisis de ventas")
     parser.add_argument("--pregunta", help="Pregunta única, sin abrir el modo interactivo")
-    parser.add_argument("--modelo", default="deepseek/deepseek-v4.1-flash", help="Modelo de OpenRouter")
+    parser.add_argument("--modelo", default=DEFAULT_MODEL, help="Modelo de OpenRouter")
     args = parser.parse_args()
     try:
         asyncio.run(run(args.pregunta, args.modelo))

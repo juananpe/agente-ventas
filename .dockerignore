@@ -1,0 +1,11 @@
+.git
+.venv
+.env
+.env.*
+.copilot-state
+__pycache__
+.pytest_cache
+original.ipynb
+README.md
+*.pyc
+*.pyo
