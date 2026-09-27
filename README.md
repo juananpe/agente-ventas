@@ -202,8 +202,29 @@ git pull
 docker compose up -d --build
 ```
 
+Aquí `--build` sí es necesario: el código va dentro de la imagen, así que hay
+que reconstruirla para que los cambios se apliquen.
+
 ### Parar el servicio
 
 ```sh
 docker compose down
 ```
+
+### Volver a lanzarlo después de pararlo
+
+```sh
+docker compose up -d
+```
+
+Sin `--build` es suficiente. `docker compose down` borra el contenedor y la red,
+pero **no** la imagen: `up -d` vuelve a crear el contenedor a partir de la imagen
+que ya existe y tarda menos de un segundo. Reserva `--build` para cuando hayas
+cambiado el código.
+
+Si solo quieres pararlo un momento, `docker compose stop` y `docker compose
+start` reutilizan el mismo contenedor.
+
+Ojo: `restart: unless-stopped` solo devuelve el servicio tras un reinicio del
+servidor si el contenedor existía y estaba en marcha. Después de un `down` (o de
+un `stop`) no se recupera solo: tendrás que lanzarlo tú con `docker compose up -d`.
