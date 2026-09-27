@@ -166,9 +166,13 @@ docker ps
 Tiene que aparecer `(healthy)` en la columna STATUS:
 
 ```
-CONTAINER ID   IMAGE        COMMAND                  CREATED          STATUS                    PORTS                      NAMES
-3990e1f3d35e   agente-web   "uvicorn web_app:app…"   15 minutes ago   Up 15 minutes (healthy)   127.0.0.1:8112->8000/tcp   agente-web-1
+CONTAINER ID   IMAGE               COMMAND                  CREATED          STATUS                   PORTS                      NAMES
+09d1ddf3899e   agente-ventas-web   "uvicorn web_app:app…"   11 seconds ago   Up 10 seconds (healthy)  127.0.0.1:8112->8000/tcp   agente-ventas-web-1
 ```
+
+Los nombres del contenedor y de la imagen (`agente-ventas-web-1`,
+`agente-ventas-web`) salen del directorio donde has clonado. Si clonas en otra
+carpeta, cambiarán.
 
 Si pone `(health: starting)`, espera unos segundos y repite `docker ps`. No
 sigas hasta ver `(healthy)`.
