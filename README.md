@@ -57,8 +57,60 @@ sesiones compartido.
 Con Docker:
 
 ```sh
+cp .env.example .env    # rellena OPENROUTER_API_KEY y SERVICE_PORT
 docker compose up --build -d
 ```
 
-Abre <http://127.0.0.1:8000>. `compose.yaml` pasa `.env` al contenedor; la
-imagen no contiene la clave. Para parar: `docker compose down`.
+Abre <http://127.0.0.1:8000> (o el puerto que hayas puesto en `SERVICE_PORT`).
+`compose.yaml` pasa `.env` al contenedor; la imagen no contiene la clave. Para
+parar: `docker compose down`.
+
+## Despliegue en el aula (ikasten)
+
+Cada estudiante tiene una cuenta `studentNN` en `ssh.ikasten.dev`, un puerto de
+servicio `81NN` y el hostname `studentNN.ikasten.dev`. El contenedor publica
+solo en `127.0.0.1:81NN` y nginx se encarga de HTTPS. Sustituye `NN` por tu
+número (por ejemplo `12`).
+
+**1. Copia el proyecto al servidor** (desde tu equipo, con tu clave):
+
+```sh
+cd /ruta/al/proyecto
+COPYFILE_DISABLE=1 tar czf - --exclude='.git' --exclude='.venv' \
+  --exclude='.copilot-state' --exclude='__pycache__' --exclude='.env' \
+  --exclude='original.ipynb' . |
+  ssh -i ./studentNN_ed25519 studentNN@ssh.ikasten.dev \
+    'mkdir -p ~/agente && tar xzf - -C ~/agente'
+```
+
+`.env` se excluye a propósito: la clave se queda en tu equipo y se crea en el
+servidor en el paso siguiente.
+
+**2. Crea el `.env` en el servidor**:
+
+```sh
+ssh -i ./studentNN_ed25519 studentNN@ssh.ikasten.dev
+cd ~/agente
+cp .env.example .env
+nano .env
+```
+
+Rellena `OPENROUTER_API_KEY` con tu clave y `SERVICE_PORT` con tu puerto `81NN`.
+
+**3. Levanta el servicio**:
+
+```sh
+docker compose up -d --build
+docker compose ps
+curl -sS http://127.0.0.1:81NN/api/health    # {"status":"ok"}
+```
+
+**4. Publica el hostname** (una sola vez, pide la contraseña de sudo):
+
+```sh
+sudo register-service --hostname studentNN.ikasten.dev --port 81NN
+```
+
+Ya está: <https://studentNN.ikasten.dev>
+
+Para actualizar el código: repite el paso 1 y luego `docker compose up -d --build`.

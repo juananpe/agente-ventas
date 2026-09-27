@@ -2,8 +2,10 @@ services:
   web:
     build: .
     init: true
+    # Solo loopback: nginx publica el hostname con HTTPS (studentNN.ikasten.dev).
+    # En el aula, SERVICE_PORT es tu puerto 81NN (student12 -> 8112).
     ports:
-      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:${SERVICE_PORT:?SERVICE_PORT is required}:8000"
     env_file:
       - .env
     restart: unless-stopped
