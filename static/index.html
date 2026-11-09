@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agente de ventas</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">📊</span>
+      <div>
+        <h1>Agente de ventas</h1>
+        <p class="subtitle" id="model">Pregunta en lenguaje natural sobre la base de ventas</p>
+      </div>
+    </div>
+    <button id="reset" class="ghost" type="button" title="Empezar una conversación nueva">Nueva conversación</button>
+  </header>
+
+  <main id="chat" class="chat" aria-live="polite">
+    <section id="welcome" class="welcome">
+      <h2>¿Qué quieres saber?</h2>
+      <p>El agente traduce tu pregunta a SQL, consulta <code>sales_data.db</code> (solo lectura) y te explica el resultado.</p>
+      <div class="suggestions">
+        <button type="button" class="chip">¿Cuál es el top 5 de tiendas por ventas totales?</button>
+        <button type="button" class="chip">¿Cómo evolucionan las ventas mes a mes?</button>
+        <button type="button" class="chip">¿Qué porcentaje de las ventas se hace en promoción?</button>
+        <button type="button" class="chip">¿Qué clases de producto venden más unidades?</button>
+      </div>
+    </section>
+  </main>
+
+  <form id="composer" class="composer">
+    <textarea id="input" rows="1" placeholder="Escribe tu pregunta…  (Enter para enviar, Mayús+Enter para salto de línea)" maxlength="4000" required></textarea>
+    <button id="send" type="submit">Enviar</button>
+  </form>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

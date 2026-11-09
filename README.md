@@ -89,4 +89,35 @@ desarrollo ya lo trae predescargado).
 La base SQLite se abre en modo de solo lectura y se devuelven como máximo 100
 filas por consulta.
 
-La versión con interfaz web vive en la rama `codex/web`.
+## Interfaz web
+
+`web_app.py` sirve una interfaz de chat en el navegador: backend en Python
+(FastAPI + uvicorn) y frontend en HTML, CSS y JavaScript sin frameworks
+(`static/`). Usa la misma clave de `.env` que la versión de terminal.
+
+```sh
+python web_app.py                 # dentro del contenedor
+.venv\Scripts\python web_app.py   # Windows sin Docker
+./.venv/bin/python web_app.py     # macOS / Linux sin Docker
+```
+
+Abre <http://127.0.0.1:8000>. Admite `--host` y `--port`
+(por ejemplo `--host 0.0.0.0` para acceder desde otro equipo de la red).
+
+- Las respuestas llegan en streaming (Server-Sent Events) a medida que el
+  modelo las escribe.
+- Cada consulta SQL que ejecuta el agente aparece como un bloque desplegable con
+  el número de filas devueltas (o el error).
+- Las tablas y listas Markdown se muestran formateadas.
+- La conversación mantiene el contexto hasta pulsar **Nueva conversación** o
+  recargar la página.
+
+API:
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| `POST` | `/api/chat` | `{"message", "session_id"?}` → stream SSE con eventos `session`, `delta`, `tool_start`, `tool_end`, `error`, `done` |
+| `POST` | `/api/reset` | `{"session_id"}` → cierra la conversación |
+| `GET` | `/api/health` | estado y modelo por defecto |
+
+Hay otra versión web, sin streaming, en la rama `codex/web`.
