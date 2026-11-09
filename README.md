@@ -89,4 +89,33 @@ desarrollo ya lo trae predescargado).
 La base SQLite se abre en modo de solo lectura y se devuelven como máximo 100
 filas por consulta.
 
-La versión con interfaz web vive en la rama `codex/web`.
+## Interfaz web
+
+`web_app.py` sirve una versión web del mismo agente: backend en Python
+(FastAPI + Uvicorn) y frontend en HTML, CSS y JavaScript vanilla, sin
+frameworks ni paso de compilación (carpeta `static/`).
+
+```sh
+python web_app.py                 # http://127.0.0.1:8000
+python web_app.py --port 8080 --modelo otro/modelo
+python web_app.py --host 0.0.0.0  # accesible desde otros equipos de la red
+```
+
+En Windows sin contenedor, usa `.venv\Scripts\python web_app.py`.
+
+- Las respuestas llegan en streaming (Server-Sent Events) y se muestran con
+  formato Markdown, incluidas las tablas.
+- Cada respuesta enseña las consultas SQL que ha ejecutado el agente, plegadas.
+- Cada pestaña del navegador tiene su propia conversación con memoria;
+  **Nueva conversación** la reinicia.
+- El modelo también se puede fijar con la variable `AGENTE_MODELO`.
+
+API:
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| `POST` | `/api/chat` | `{session_id, message}` → flujo SSE con eventos `delta`, `tool`, `tool_done`, `error` y `done` |
+| `POST` | `/api/reset` | `{session_id}` → cierra esa conversación |
+| `GET` | `/api/info` | Modelo configurado |
+
+Hay otra versión web, independiente de esta, en la rama `codex/web`.

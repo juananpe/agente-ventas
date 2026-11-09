@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agente de ventas</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">📊</span>
+      <div>
+        <h1>Agente de ventas</h1>
+        <p class="subtitle">Pregunta en lenguaje natural sobre <code>sales_data.db</code> · <span id="model">…</span></p>
+      </div>
+    </div>
+    <button id="reset" class="ghost" type="button" title="Empezar una conversación nueva">Nueva conversación</button>
+  </header>
+
+  <main id="chat" class="chat" aria-live="polite">
+    <section id="welcome" class="welcome">
+      <h2>¿Qué quieres saber de las ventas?</h2>
+      <p>El agente traduce tu pregunta a SQL, consulta la base de datos (solo lectura) y te responde.</p>
+      <div class="suggestions">
+        <button type="button" class="suggestion">¿Cuál es el top 5 de tiendas por ventas totales?</button>
+        <button type="button" class="suggestion">¿Cómo evolucionan las ventas mes a mes?</button>
+        <button type="button" class="suggestion">¿Qué porcentaje de las ventas se hace en promoción?</button>
+        <button type="button" class="suggestion">¿Qué clases de producto venden más unidades?</button>
+      </div>
+    </section>
+  </main>
+
+  <form id="composer" class="composer">
+    <textarea id="input" rows="1" placeholder="Escribe tu pregunta…" title="Enter para enviar · Shift+Enter para salto de línea" required></textarea>
+    <button id="send" type="submit">Enviar</button>
+  </form>
+
+  <template id="tpl-message">
+    <article class="message">
+      <div class="avatar" aria-hidden="true"></div>
+      <div class="bubble">
+        <div class="tools"></div>
+        <div class="content"></div>
+      </div>
+    </article>
+  </template>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
